@@ -39,12 +39,12 @@ public class SSLocal: SecureSocket {
     }
 
     private func handle(socket: Socket) {
-        let queue = DispatchQueue.global(qos: .default)
+        let queue = DispatchQueue.global(qos: .userInteractive)
         do {
             let remote = try dialRemote()
             let group = DispatchGroup()
             group.enter()
-            queue.async { [unowned self] in
+            DispatchQueue.global().async { [unowned self] in
                 do {
                     try self.encodeCopy(dst: remote, src: socket)
                 } catch {
@@ -53,7 +53,7 @@ public class SSLocal: SecureSocket {
                 group.leave()
             }
             group.enter()
-            queue.async { [unowned self] in
+            DispatchQueue.global().async { [unowned self] in
                 do {
                     try self.decodeCopy(dst: socket, src: remote)
                 } catch {
@@ -97,7 +97,7 @@ public class SSLocal: SecureSocket {
                     self.handle(socket: newSocket)
                 } catch {
                     socket.close()
-                    Vulcan.default.error("Failed to  accept connection, \(error)")
+                    Vulcan.default.error("Failed to accept connection, \(error)")
                 }
             }
         } catch {

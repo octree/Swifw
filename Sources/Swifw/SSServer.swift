@@ -26,7 +26,7 @@ public class SSServer: SecureSocket {
      */
     private func handle(socket: Socket) {
         Vulcan.default.info("😅 Handle")
-        let queue = DispatchQueue.global(qos: .default)
+        let queue = DispatchQueue.global(qos: .userInteractive)
         queue.async { [unowned self] in
             /*
              SOCKS Protocol Version 5 https://www.ietf.org/rfc/rfc1928.txt
@@ -172,7 +172,7 @@ public class SSServer: SecureSocket {
                 try self.encodeWrite(data: infoData, socket: socket)
                 let group = DispatchGroup()
                 group.enter()
-                queue.async { [unowned self] in
+                DispatchQueue.global().async { [unowned self] in
                     do {
                         try self.decodeCopy(dst: remoteConn, src: socket)
                     } catch {
@@ -181,7 +181,7 @@ public class SSServer: SecureSocket {
                     group.leave()
                 }
                 group.enter()
-                queue.async { [unowned self] in
+                DispatchQueue.global().async { [unowned self] in
                     do {
                         try self.encodeCopy(dst: socket, src: remoteConn)
                     } catch {
@@ -190,7 +190,7 @@ public class SSServer: SecureSocket {
                     group.leave()
                 }
 
-                group.notify(queue: .global(qos: .userInitiated)) {
+                group.notify(queue: .global(qos: .userInteractive)) {
                     remoteConn.close()
                     socket.close()
                     Vulcan.default.info("Finish & Close")
