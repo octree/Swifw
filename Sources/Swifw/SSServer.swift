@@ -105,6 +105,7 @@ public class SSServer: SecureSocket {
             }
             try socket.listen(on: self.listenAddr.port)
             didListen?()
+            Vulcan.default.info("Server Did Listen on :\(listenAddr.port), \(socket.socketfd)")
             while true {
                 let newSocket = try socket.acceptClientConnection()
                 Vulcan.default.info("Accepted connection from: \(newSocket.remoteHostname) on port \(newSocket.remotePort)")

@@ -220,7 +220,7 @@ public class SSLocal: SecureSocket {
             }
             try socket.listen(on: self.listenAddr.port)
             didListen?()
-            Vulcan.default.info("Local Did Listen, \(socket.socketfd)")
+            Vulcan.default.info("Local Did Listen on :\(listenAddr.port), \(socket.socketfd)")
             while true {
                 do {
                     let newSocket = try socket.acceptClientConnection()
